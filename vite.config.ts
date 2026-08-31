@@ -19,26 +19,23 @@ function apiServerPlugin(): Plugin {
           next();
         }
       });
-    }
+    },
   };
 }
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss(), apiServerPlugin()],
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, '.'),
-      },
-    },
-    server: {
-      port: 3000,
-      host: '0.0.0.0',
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modify—file watching is disabled to prevent flickering during agent edits.
-      hmr: process.env.DISABLE_HMR !== 'true',
-      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
-      watch: process.env.DISABLE_HMR === 'true' ? null : {},
-    },
+    plugins: [tailwindcss(), react(), apiServerPlugin()],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return id.toString().split('node_modules/')[1].split('/')[0].toString();
+            }
+          }
+        }
+      }
+    }
   };
 });
