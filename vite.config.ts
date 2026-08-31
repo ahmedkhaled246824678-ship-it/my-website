@@ -27,6 +27,7 @@ export default defineConfig(() => {
   return {
     plugins: [tailwindcss(), react(), apiServerPlugin()],
     build: {
+      chunkSizeWarningLimit: 1000,
       rollupOptions: {
         output: {
           manualChunks(id) {
